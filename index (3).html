@@ -1,0 +1,3321 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>複合不等式「睇箭咀」學習工具 | 隨機出題 & 課堂工作台</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --secondary: #0284c7;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --warning-bg: #fffbeb;
+      --warning-border: #f59e0b;
+      --warning-text: #b45309;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 10px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      --font-math: "Times New Roman", Times, "Cambria Math", "Nimbus Roman No9 L", -apple-system, "PingFang TC", "Microsoft JhengHei", serif;
+    }
+
+    body.dark {
+      --primary: #3b82f6;
+      --primary-dark: #60a5fa;
+      --primary-light: #1e293b;
+      --bg: #090d16;
+      --card-bg: #131d31;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #24324d;
+      --warning-bg: #291e0a;
+      --warning-text: #fde68a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE WEB DESIGN (RWD) ARCHITECTURE
+       - Base Styles: Desktop / Laptop (Spacious, elegant, uncompressed)
+       - @media Tablet Landscape: 2-column split, zero scroll, comfortable touch
+       - @media Mobile Portrait: Single-column vertical compression, "一頁過"
+       - @media Mobile Landscape: Ultra-compact 2-column split
+       ========================================================================== */
+
+    html, body {
+      min-height: 100%;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.4;
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 920px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Header */
+    header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title-box h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+    }
+
+    .btn-icon {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+
+    .btn-icon:hover {
+      background: var(--border);
+    }
+
+    .student-badge-btn {
+      background: var(--primary-light);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 6px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    body.dark .student-badge-btn {
+      background: #1e3a8a;
+      color: #93c5fd;
+    }
+
+    /* Navigation Tabs */
+    .mode-nav {
+      display: flex;
+      gap: 6px;
+      background: var(--card-bg);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .mode-tab.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Scoreboard */
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .scoreboard.cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .stat-val {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1.15;
+    }
+
+    /* Main Quiz Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .q-badge {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 3px 10px;
+      border-radius: 10px;
+    }
+
+    body.dark .q-badge {
+      background: #1e3a8a;
+      color: #93c5fd;
+    }
+
+    .practice-filter-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .math-var {
+      font-family: var(--font-math);
+      font-style: italic;
+      font-weight: 700;
+      padding: 0 1px;
+      letter-spacing: 0.02em;
+    }
+
+    .math-formula {
+      font-family: var(--font-math);
+      letter-spacing: 0.02em;
+    }
+
+    /* Quiz Responsive Layout */
+    .quiz-content-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quiz-visual-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-interact-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Expression Banner */
+    .inequality-banner {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(2, 132, 199, 0.05) 100%);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ineq-expr {
+      font-family: var(--font-math);
+      font-size: 1.55rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      line-height: 1.25;
+      letter-spacing: 0.02em;
+    }
+
+    .connector-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 6px;
+      font-size: 1.15rem;
+      font-weight: 900;
+    }
+
+    .connector-and {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .connector-or {
+      background: #0284c7;
+      color: #ffffff;
+    }
+
+    .ineq-rule-tip {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Diagram Container & SVG */
+    .diagram-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    svg.number-line-svg {
+      width: 100%;
+      height: 165px;
+      display: block;
+    }
+
+    /* Hint Control & Warning */
+    .hint-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-hint {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+
+    .hint-penalty-tag {
+      font-size: 0.75rem;
+      color: #dc2626;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .hint-box {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .hint-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #92400e;
+      line-height: 1.3;
+    }
+
+    body.dark .hint-title {
+      color: #fcd34d;
+    }
+
+    .zones-3-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .zone-card {
+      background: #ffffff;
+      border: 1px solid #fed7aa;
+      border-radius: 6px;
+      padding: 6px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    body.dark .zone-card {
+      background: #12100e;
+      border-color: #78350f;
+    }
+
+    .zone-card.zone-pass {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    body.dark .zone-card.zone-pass {
+      border-color: #166534;
+      background: #052e16;
+    }
+
+    .zone-card.zone-fail {
+      border-color: #fecaca;
+      background: #fef2f2;
+    }
+
+    body.dark .zone-card.zone-fail {
+      border-color: #991b1b;
+      background: #450a0a;
+    }
+
+    .zone-name {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .zone-range {
+      font-family: var(--font-math);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-main);
+    }
+
+    .arrow-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      display: inline-block;
+      margin: 1px auto;
+    }
+
+    .badge-2 { background: #dcfce7; color: #15803d; }
+    .badge-1 { background: #ffedd5; color: #c2410c; }
+    .badge-0 { background: #f1f5f9; color: #64748b; }
+
+    body.dark .badge-2 { background: #14532d; color: #86efac; }
+    body.dark .badge-1 { background: #7c2d12; color: #fdba74; }
+    body.dark .badge-0 { background: #334155; color: #cbd5e1; }
+
+    .verdict-tag {
+      font-size: 0.92rem;
+      font-weight: 900;
+    }
+
+    .verdict-tag.pass { color: var(--success); }
+    .verdict-tag.fail { color: var(--danger); }
+
+    .hint-summary-box {
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      background: rgba(245, 158, 11, 0.12);
+      border-left: 3px solid #f59e0b;
+      border-radius: 4px;
+      line-height: 1.35;
+    }
+
+    /* Options Grid (Desktop Default) */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .option-btn {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.12s;
+      text-align: left;
+      min-height: 48px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .opt-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .opt-content {
+      flex: 1;
+      overflow-wrap: break-word;
+      font-family: var(--font-math);
+      font-size: 1.12rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .option-btn.selected-correct {
+      background: var(--success-bg) !important;
+      border-color: var(--success) !important;
+      color: #065f46 !important;
+    }
+
+    body.dark .option-btn.selected-correct {
+      background: #064e3b !important;
+      color: #a7f3d0 !important;
+    }
+
+    .option-btn.selected-correct .opt-letter {
+      background: var(--success);
+      color: #ffffff;
+      border-color: var(--success);
+    }
+
+    .option-btn.selected-wrong {
+      background: var(--danger-bg) !important;
+      border-color: var(--danger) !important;
+      color: #991b1b !important;
+      animation: shake 0.25s;
+    }
+
+    body.dark .option-btn.selected-wrong {
+      background: #7f1d1d !important;
+      color: #fecaca !important;
+    }
+
+    .option-btn.selected-wrong .opt-letter {
+      background: var(--danger);
+      color: #ffffff;
+      border-color: var(--danger);
+    }
+
+    /* Feedback Area */
+    .feedback-card {
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    .feedback-card.correct {
+      background: var(--success-bg);
+      border: 1.5px solid var(--success);
+      color: #065f46;
+    }
+
+    body.dark .feedback-card.correct {
+      background: #064e3b;
+      color: #ecfdf5;
+    }
+
+    .feedback-card.wrong {
+      background: var(--danger-bg);
+      border: 1.5px solid var(--danger);
+      color: #991b1b;
+    }
+
+    body.dark .feedback-card.wrong {
+      background: #7f1d1d;
+      color: #fef2f2;
+    }
+
+    .feedback-text h3 {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .feedback-text p {
+      font-size: 0.82rem;
+    }
+
+    .btn-next {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      font-size: 0.92rem;
+      font-weight: 800;
+      padding: 8px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-next:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Teaching Sandbox Panel (Desktop Default) */
+    .sandbox-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sandbox-content-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sandbox-controls-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sandbox-visual-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sandbox-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      background: var(--bg);
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .sandbox-presets-bar {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-preset-pill {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 5px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.74rem;
+      font-weight: 700;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-preset-pill:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .practice-type-select {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      color: var(--primary);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      outline: none;
+      max-width: 230px;
+    }
+
+    body.dark .practice-type-select {
+      background: #1e293b;
+      color: #93c5fd;
+      border-color: #334155;
+    }
+
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .control-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    select, input[type="number"], input[type="text"] {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      outline: none;
+    }
+
+    .btn-reveal-ans {
+      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 7px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    /* ==========================================================================
+       MEDIA QUERY 1: 平板橫向 (Tablet Landscape)
+       - 屏幕特徵：寬度充足 (>= 681px)，但高度受限 (<= 850px)
+       - 核心策略：左右雙欄 (2-Column Split)，免滾動「一頁過」，保持指尖觸控舒適度
+       ========================================================================== */
+    @media (min-width: 681px) and (max-height: 850px), (min-width: 768px) and (orientation: landscape) and (max-height: 900px) {
+      body {
+        padding: 6px 12px 10px;
+      }
+
+      .container {
+        max-width: 1020px;
+        gap: 6px;
+      }
+
+      header {
+        padding: 5px 12px;
+      }
+
+      .header-title-box h1 {
+        font-size: 1.05rem;
+      }
+
+      .btn-icon, .student-badge-btn {
+        padding: 4px 8px;
+        font-size: 0.74rem;
+      }
+
+      .mode-nav {
+        padding: 2px 4px;
+        gap: 4px;
+      }
+
+      .mode-tab {
+        padding: 5px 10px;
+        font-size: 0.82rem;
+      }
+
+      .scoreboard {
+        gap: 4px;
+      }
+
+      .stat-card {
+        padding: 4px 8px;
+      }
+
+      .stat-label {
+        font-size: 0.65rem;
+      }
+
+      .stat-val {
+        font-size: 0.95rem;
+      }
+
+      .card {
+        padding: 8px 12px;
+        gap: 6px;
+      }
+
+      /* 2-Column Split for Tablet Landscape */
+      .quiz-content-layout {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 12px;
+        align-items: start;
+      }
+
+      .quiz-visual-col {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .quiz-interact-col {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .inequality-banner {
+        padding: 6px 10px;
+        gap: 2px;
+      }
+
+      .ineq-expr {
+        font-size: 1.28rem;
+      }
+
+      .connector-badge {
+        padding: 2px 8px;
+        font-size: 1rem;
+      }
+
+      .ineq-rule-tip {
+        font-size: 0.7rem;
+      }
+
+      svg.number-line-svg {
+        height: 135px;
+      }
+
+      .hint-control-bar {
+        padding: 1px 0;
+      }
+
+      .btn-hint {
+        padding: 4px 10px;
+        font-size: 0.74rem;
+      }
+
+      .hint-penalty-tag {
+        font-size: 0.68rem;
+      }
+
+      .hint-box {
+        padding: 6px 8px;
+        gap: 4px;
+      }
+
+      .hint-title {
+        font-size: 0.75rem;
+      }
+
+      .zones-3-grid {
+        gap: 4px;
+      }
+
+      .zone-card {
+        padding: 4px 2px;
+      }
+
+      .zone-name {
+        font-size: 0.64rem;
+      }
+
+      .zone-range {
+        font-size: 0.74rem;
+      }
+
+      .arrow-badge {
+        font-size: 0.64rem;
+        padding: 1px 4px;
+      }
+
+      .verdict-tag {
+        font-size: 0.82rem;
+      }
+
+      .hint-summary-box {
+        font-size: 0.72rem;
+        padding: 4px 6px;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+
+      .option-btn {
+        min-height: 42px;
+        padding: 8px 10px;
+        font-size: 0.95rem;
+        gap: 6px;
+      }
+
+      .opt-letter {
+        width: 24px;
+        height: 24px;
+        font-size: 0.78rem;
+      }
+
+      .feedback-card {
+        padding: 8px 10px;
+      }
+
+      .feedback-text h3 {
+        font-size: 0.92rem;
+      }
+
+      .feedback-text p {
+        font-size: 0.75rem;
+      }
+
+      .btn-next {
+        padding: 7px 16px;
+        font-size: 0.86rem;
+      }
+
+      /* Sandbox 2-Column Split for Tablet Landscape */
+      .sandbox-panel {
+        padding: 8px 12px;
+        gap: 6px;
+      }
+
+      .sandbox-content-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        align-items: start;
+      }
+
+      .sandbox-controls-col {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .sandbox-visual-col {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .sandbox-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .control-group {
+        padding: 4px 8px;
+      }
+
+      .sandbox-presets-bar {
+        gap: 4px;
+      }
+
+      .btn-reveal-ans {
+        padding: 7px 14px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* ==========================================================================
+       MEDIA QUERY 2: 手機直向 (Mobile Portrait)
+       - 屏幕特徵：寬度狹窄 (<= 640px)，垂直單欄
+       - 核心策略：縱向精細壓縮，字體與間距微型化，達成「一頁過」無滾動條
+       ========================================================================== */
+    @media (max-width: 640px) and (orientation: portrait), (max-width: 600px) {
+      body {
+        padding: 4px 6px 8px;
+      }
+
+      .container {
+        max-width: 100%;
+        gap: 4px;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 6px 8px;
+        border-radius: 8px;
+        gap: 6px;
+      }
+
+      .header-title-box {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .header-title-box h1 {
+        font-size: 1.02rem;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .header-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: 4px;
+        margin-left: 0;
+      }
+
+      .header-actions .btn-icon,
+      .header-actions .student-badge-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 4px 4px;
+        font-size: 0.72rem;
+        white-space: nowrap;
+      }
+
+      .mode-nav {
+        padding: 2px;
+        gap: 3px;
+      }
+
+      .mode-tab {
+        padding: 4px 6px;
+        font-size: 0.76rem;
+      }
+
+      .scoreboard {
+        gap: 3px;
+      }
+
+      .stat-card {
+        padding: 3px 4px;
+        border-radius: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.6rem;
+      }
+
+      .stat-val {
+        font-size: 0.88rem;
+      }
+
+      .card {
+        padding: 6px 8px 8px;
+        border-radius: 8px;
+        gap: 4px;
+      }
+
+      .quiz-content-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .quiz-visual-col {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .quiz-interact-col {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .question-header {
+        padding-bottom: 2px;
+      }
+
+      .q-badge {
+        font-size: 0.68rem;
+        padding: 1px 6px;
+      }
+
+
+      .inequality-banner {
+        padding: 4px 6px;
+        border-radius: 6px;
+        gap: 2px;
+      }
+
+      .ineq-expr {
+        font-size: 1.18rem;
+        gap: 6px;
+      }
+
+      .connector-badge {
+        padding: 1px 7px;
+        font-size: 0.92rem;
+      }
+
+      .ineq-rule-tip {
+        font-size: 0.65rem;
+      }
+
+      svg.number-line-svg {
+        height: 115px;
+      }
+
+      .hint-control-bar {
+        gap: 4px;
+      }
+
+      .btn-hint {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+      }
+
+      .hint-penalty-tag {
+        font-size: 0.64rem;
+      }
+
+      .hint-box {
+        padding: 5px 6px;
+        gap: 4px;
+        border-radius: 6px;
+      }
+
+      .hint-title {
+        font-size: 0.72rem;
+      }
+
+      .zones-3-grid {
+        gap: 3px;
+      }
+
+      .zone-card {
+        padding: 3px 2px;
+      }
+
+      .zone-name {
+        font-size: 0.6rem;
+      }
+
+      .zone-range {
+        font-size: 0.68rem;
+      }
+
+      .arrow-badge {
+        font-size: 0.6rem;
+        padding: 1px 3px;
+      }
+
+      .verdict-tag {
+        font-size: 0.76rem;
+      }
+
+      .hint-summary-box {
+        font-size: 0.68rem;
+        padding: 3px 5px;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+      }
+
+      .option-btn {
+        min-height: 38px;
+        padding: 6px 8px;
+        font-size: 0.86rem;
+        border-radius: 6px;
+        gap: 6px;
+      }
+
+      .opt-letter {
+        width: 22px;
+        height: 22px;
+        font-size: 0.74rem;
+      }
+
+      .feedback-card {
+        padding: 5px 8px;
+      }
+
+      .feedback-text h3 {
+        font-size: 0.86rem;
+      }
+
+      .feedback-text p {
+        font-size: 0.7rem;
+      }
+
+      .btn-next {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+      }
+
+      /* Sandbox in Mobile Portrait */
+      .sandbox-panel {
+        padding: 6px 8px;
+        gap: 5px;
+      }
+
+      .sandbox-content-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .sandbox-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .control-group {
+        padding: 3px 6px;
+      }
+
+      .control-row {
+        gap: 4px;
+      }
+
+      .sandbox-presets-bar {
+        gap: 3px;
+      }
+
+      .btn-reveal-ans {
+        padding: 5px 10px;
+        font-size: 0.78rem;
+      }
+    }
+
+    /* ==========================================================================
+       MEDIA QUERY 3: 手機橫向 (Mobile Landscape)
+       - 屏幕特徵：高度極其有限 (<= 500px)
+       - 核心策略：雙欄緊湊橫向排布，隱藏非關鍵說明，保證免滾動全覽
+       ========================================================================== */
+    @media (max-height: 500px) and (orientation: landscape) {
+      body {
+        padding: 2px 6px 4px;
+      }
+
+      .container {
+        gap: 3px;
+        max-width: 100%;
+      }
+
+      header {
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      .header-title-box h1 {
+        font-size: 0.82rem;
+      }
+
+      .btn-icon, .student-badge-btn {
+        padding: 2px 4px;
+        font-size: 0.62rem;
+      }
+
+      .mode-nav {
+        padding: 1px 3px;
+        gap: 3px;
+      }
+
+      .mode-tab {
+        padding: 2px 6px;
+        font-size: 0.7rem;
+      }
+
+      .scoreboard {
+        gap: 3px;
+      }
+
+      .stat-card {
+        padding: 2px 4px;
+      }
+
+      .stat-label {
+        font-size: 0.55rem;
+      }
+
+      .stat-val {
+        font-size: 0.8rem;
+      }
+
+      .card {
+        padding: 4px 6px;
+        gap: 3px;
+      }
+
+      .quiz-content-layout {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 8px;
+        align-items: start;
+      }
+
+      .inequality-banner {
+        padding: 2px 6px;
+        gap: 1px;
+      }
+
+      .ineq-expr {
+        font-size: 1.05rem;
+        gap: 5px;
+      }
+
+      .connector-badge {
+        padding: 1px 5px;
+        font-size: 0.85rem;
+      }
+
+      .ineq-rule-tip {
+        display: none;
+      }
+
+      svg.number-line-svg {
+        height: 95px;
+      }
+
+      .hint-control-bar {
+        gap: 4px;
+      }
+
+      .btn-hint {
+        padding: 2px 6px;
+        font-size: 0.65rem;
+      }
+
+      .hint-penalty-tag {
+        font-size: 0.6rem;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+      }
+
+      .option-btn {
+        min-height: 32px;
+        padding: 4px 6px;
+        font-size: 0.78rem;
+        gap: 4px;
+      }
+
+      .opt-letter {
+        width: 18px;
+        height: 18px;
+        font-size: 0.68rem;
+      }
+
+      .feedback-card {
+        padding: 4px 6px;
+      }
+
+      .feedback-text h3 {
+        font-size: 0.8rem;
+      }
+
+      .feedback-text p {
+        font-size: 0.65rem;
+      }
+
+      .btn-next {
+        padding: 4px 10px;
+        font-size: 0.74rem;
+      }
+
+      .sandbox-content-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        align-items: start;
+      }
+    }
+
+    /* Modal Overlay & Certificate */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 14px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-dialog {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-dialog h2 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .modal-form-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .modal-btn-start {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 7px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Certificate Modal */
+    .cert-container {
+      background: #ffffff;
+      border: 8px solid #1e3a8a;
+      outline: 2px solid #d97706;
+      outline-offset: -5px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 580px;
+      padding: 24px 18px;
+      text-align: center;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cert-header {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #1e3a8a;
+    }
+
+    .cert-subtitle {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #b45309;
+      text-transform: uppercase;
+    }
+
+    .cert-student-box {
+      margin: 8px 0 4px;
+      border-bottom: 2px dashed #94a3b8;
+      padding-bottom: 4px;
+      width: 80%;
+    }
+
+    .cert-student-name {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .cert-desc {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: #334155;
+      max-width: 460px;
+    }
+
+    .cert-medal {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+
+    .cert-date {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .cert-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #certificateModal, #certificateModal * { visibility: visible !important; }
+      #certificateModal {
+        position: absolute !important;
+        inset: 0 !important;
+        background: #ffffff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      .no-print { display: none !important; }
+      .cert-container { border-width: 6px !important; max-width: 95% !important; }
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Entry / Setup Modal: Language & Student Information -->
+  <div id="entryModal" class="modal-overlay">
+    <div class="modal-dialog">
+      <h2><span>📐</span> <span id="entryTitle">歡迎進入複合不等式學習工具</span></h2>
+      <p style="font-size:0.78rem; color:var(--text-muted);" id="entrySubTitle">
+        請選擇語言並輸入學生資訊（用於合共答對 20 題頒發榮譽證書）：
+      </p>
+
+      <div class="modal-form-group">
+        <label id="entryLblLang">語言 / Language：</label>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="option-btn" id="btnChooseZh" style="flex:1; justify-content:center; padding:6px; min-height:36px;" onclick="chooseEntryLang('zh')">
+            繁體中文
+          </button>
+          <button type="button" class="option-btn" id="btnChooseEn" style="flex:1; justify-content:center; padding:6px; min-height:36px;" onclick="chooseEntryLang('en')">
+            English
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-form-group">
+        <label id="entryLblClass">班別 (Class)：</label>
+        <input type="text" id="inputClass" placeholder="例：3A / 4B" maxlength="10" required>
+      </div>
+
+      <div class="modal-form-group">
+        <label id="entryLblNo">學號 (Class No.)：</label>
+        <input type="number" id="inputNo" placeholder="例：15" min="1" max="99" required>
+      </div>
+
+      <div class="modal-form-group">
+        <label id="entryLblName">姓名 (Name)：</label>
+        <input type="text" id="inputName" placeholder="例：陳大文 / Chan Tai Man" maxlength="30" required>
+      </div>
+
+      <button type="button" class="modal-btn-start" onclick="confirmStudentEntry()">
+        <span id="entryBtnText">開始練習 ➔</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 20-Correct Certificate Modal -->
+  <div id="certificateModal" class="modal-overlay hidden">
+    <div class="cert-container">
+      <div class="cert-medal">🏆</div>
+      <div class="cert-header" id="certMainTitle">複合不等式達人證書</div>
+      <div class="cert-subtitle" id="certSubTitle">Certificate of Mastery in Compound Inequalities</div>
+
+      <div style="font-size:0.85rem; color:#475569;" id="certCertifyText">茲證明</div>
+      <div class="cert-student-box">
+        <div class="cert-student-name" id="certStudentNameDisplay">中三甲班 15號 陳大文</div>
+      </div>
+
+      <div class="cert-desc" id="certDescriptionText">
+        於複合不等式「睇箭咀」挑戰中，以卓越的數線分區分析能力，合共無提示正確完成 <strong>20 題</strong>，特頒此狀，以資嘉許！
+      </div>
+
+      <div class="cert-date" id="certDateDisplay">日期：2026年9月29日</div>
+
+      <div class="cert-actions no-print">
+        <button class="btn-icon" style="background:#1e3a8a; color:#ffffff; padding:7px 14px; font-size:0.82rem;" onclick="window.print()">
+          <span>🖨️</span> <span id="certBtnPrint">列印 / 存為PDF</span>
+        </button>
+        <button class="btn-icon" style="background:#f1f5f9; padding:7px 14px; font-size:0.82rem;" onclick="closeCertificate()">
+          <span>🚀</span> <span id="certBtnContinue">繼續挑戰</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-title-box">
+        <h1 id="uiMainTitle">📐 複合不等式「睇箭咀」</h1>
+      </div>
+      <div class="header-actions">
+        <button id="studentBadgeBtn" class="student-badge-btn" onclick="openStudentEditModal()" title="修改學生資料">
+          <span>👤</span> <span id="studentBadgeText">學生登入</span>
+        </button>
+        <button id="langToggleBtn" class="btn-icon" title="切換語言 / Switch Language">
+          <span>🌐</span> <span id="langStatusText">English</span>
+        </button>
+        <button id="soundToggleBtn" class="btn-icon" title="切換音效">
+          <span>🔊</span> <span id="soundStatusText">音效</span>
+        </button>
+        <button id="themeToggleBtn" class="btn-icon" title="切換深淺模式">
+          <span>🌓</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs (3 Modes) -->
+    <nav class="mode-nav">
+      <button class="mode-tab active" id="tabRandom" onclick="switchMode('random')">
+        🎲 隨機出題
+      </button>
+      <button class="mode-tab" id="tabPractice" onclick="switchMode('practice')">
+        🎯 練習模式 (選題型)
+      </button>
+      <button class="mode-tab" id="tabSandbox" onclick="switchMode('sandbox')">
+        🔬 教學工作台
+      </button>
+    </nav>
+
+    <!-- Ultra-Compact Scoreboard (4 columns) -->
+    <div id="scoreboard" class="scoreboard">
+      <div class="stat-card">
+        <div class="stat-label" id="lblStatQuestion">題數</div>
+        <div class="stat-val" id="statQuestionNum">第 1 題</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" id="lblStatCorrect">得分</div>
+        <div class="stat-val" id="statCorrect">0</div>
+      </div>
+      <div class="stat-card" id="cardStatStreak">
+        <div class="stat-label" id="lblStatStreak">目標(合共20題)</div>
+        <div class="stat-val" id="statStreak">0 / 20 🏆</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" id="lblStatAccuracy">正確率</div>
+        <div class="stat-val" id="statAccuracy">100%</div>
+      </div>
+    </div>
+
+    <!-- Main Quiz Card -->
+    <div id="quizCard" class="card">
+      <div class="question-header">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="q-badge" id="questionBadge">第 1 題</span>
+        </div>
+        <div id="practiceTypeFilterContainer" class="practice-filter-box" style="display:none;">
+          <label for="practiceTypeFilter" id="uiTopicFilterLbl" style="font-size:0.72rem; font-weight:800; color:var(--text-muted);">題型：</label>
+          <select id="practiceTypeFilter" onchange="onPracticeTypeChange(this.value)" class="practice-type-select">
+            <option value="ALL" id="optTypeAll">🎲 全部題型隨機</option>
+            <option value="TYPE1" id="optType1">1. 同向向左/向右</option>
+            <option value="TYPE2" id="optType2">2. 相向交疊</option>
+            <option value="TYPE3" id="optType3">3. 背向無交疊</option>
+            <option value="TYPE4" id="optType4">4. 同點背向 (雙空/雙實/一空一實)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Responsive Layout Container: Single column on mobile/desktop, 2-column split on tablet landscape -->
+      <div class="quiz-content-layout">
+        <!-- Visual & Diagram Column -->
+        <div class="quiz-visual-col">
+          <!-- Inequality Display Banner -->
+          <div class="inequality-banner">
+            <div class="ineq-expr" id="inequalityExprDisplay">
+              <span>x ≥ -5</span>
+              <span class="connector-badge connector-and">及</span>
+              <span>x > -2</span>
+            </div>
+            <div class="ineq-rule-tip" id="uiObserveTip">
+              觀察數線箭咀覆蓋，選出最終結論：
+            </div>
+          </div>
+
+          <!-- Diagram SVG (Number line ONLY displays boundary numbers of the question!) -->
+          <div class="diagram-container">
+            <svg id="numberLineSvg" class="number-line-svg" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+
+          <!-- Hint Control with Penalty Notice -->
+          <div class="hint-control-bar">
+            <button id="toggleHintBtn" class="btn-hint" onclick="toggleHint()">
+              <span>💡</span> <span id="hintBtnText">顯示「睇箭咀」三區分析 (按 H)</span>
+            </button>
+            <span class="hint-penalty-tag" id="uiHintPenaltyNote">
+              ⚠️ 開啟提示本題不計分
+            </span>
+          </div>
+
+          <!-- 3 Zones Cards -->
+          <div id="hintBox" class="hint-box hidden">
+            <div class="hint-title">
+              <span>🎯</span> <span id="uiTeacherRuleHead">老師口訣：</span>
+              <span id="hintConnectorRuleText" style="font-weight:900;">【及】必須 2 條箭咀雙重覆蓋 (✓)，少於 2 條即 (✗)</span>
+            </div>
+
+            <div class="zones-3-grid" id="hintZonesGrid"></div>
+
+            <div class="hint-summary-box" id="hintSummaryConclusion">
+              💡 結論推導：只有打【✓】的區域才納入解的範圍。
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Options & Feedback Column -->
+        <div class="quiz-interact-col">
+          <!-- Options Grid -->
+          <div class="options-grid" id="optionsGrid"></div>
+
+          <!-- Feedback Area: Only shows "Next Question" when correctly answered! -->
+          <div id="feedbackCard" class="feedback-card hidden">
+            <div class="feedback-text">
+              <h3 id="feedbackTitle">🎉 答得完全正確！</h3>
+              <p id="feedbackDesc">解析內容...</p>
+            </div>
+            <button class="btn-next hidden" id="btnNext" onclick="nextQuestion()">
+              <span id="uiNextBtnText">下一題 ➔</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teaching Sandbox Panel -->
+    <div id="sandboxCard" class="sandbox-panel hidden">
+      <div style="border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+        <h2 style="font-size: 1.15rem; font-weight:800;" id="sbUiTitle">🔬 教學工作台 (課堂示範)</h2>
+        <p style="color:var(--text-muted); font-size:0.75rem; margin-top:2px;" id="sbUiDesc">
+          自由切換不等式與連詞。預設不顯示答案，方便課堂向學生發問，點擊下方按鈕才揭曉答案與三區分析。
+        </p>
+      </div>
+
+      <div class="sandbox-content-layout">
+        <!-- Controls & Presets Column -->
+        <div class="sandbox-controls-col">
+          <div class="sandbox-controls">
+            <div class="control-group">
+              <label id="sbLblIneq1">不等式 1 (上層)：</label>
+              <div class="control-row">
+                <span class="math-var" style="font-size:1.15rem;">x</span>
+                <select id="sbOp1" onchange="onSandboxInputChange()">
+                  <option value=">=">&ge;</option>
+                  <option value=">">&gt;</option>
+                  <option value="<=">&le;</option>
+                  <option value="<">&lt;</option>
+                </select>
+                <input type="number" id="sbVal1" value="-5" style="width: 60px;" onchange="onSandboxInputChange()">
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label id="sbLblConn">連詞 (Connector)：</label>
+              <select id="sbConnector" onchange="onSandboxInputChange()" style="font-weight:800; color:var(--primary);">
+                <option value="AND" id="sbOptAnd">及 (AND) • 需 2 條 (✓)</option>
+                <option value="OR" id="sbOptOr">或 (OR) • 需 1/2 條 (✓)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label id="sbLblIneq2">不等式 2 (下層)：</label>
+              <div class="control-row">
+                <span class="math-var" style="font-size:1.15rem;">x</span>
+                <select id="sbOp2" onchange="onSandboxInputChange()">
+                  <option value=">=">&ge;</option>
+                  <option value=">" selected>&gt;</option>
+                  <option value="<=">&le;</option>
+                  <option value="<">&lt;</option>
+                </select>
+                <input type="number" id="sbVal2" value="-2" style="width: 60px;" onchange="onSandboxInputChange()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Preset Examples (All Types 1-7) -->
+          <div class="sandbox-presets-bar">
+            <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); width:100%;" id="sbUiPresetsLbl">經典範例（筆記 1–7 涵蓋全部類型）：</span>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(1)">1. 同向向右</button>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(2)">2. 同向向左</button>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(3)">3. 相向交疊</button>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(4)">4. 背向分開</button>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(5)">5. 同點雙空心</button>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(6)">6. 同點一實一空</button>
+            <button type="button" class="btn-preset-pill" onclick="loadSandboxPreset(7)">7. 同點雙實心</button>
+          </div>
+
+          <!-- Reveal Answer Button -->
+          <div style="margin-top: 4px;">
+            <button id="sbToggleAnsBtn" class="btn-reveal-ans" onclick="toggleSandboxAnswer()">
+              <span>👁️</span> <span id="sbToggleAnsText">顯示答案與三區分析 (Show Answer)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Diagram & Answer Column -->
+        <div class="sandbox-visual-col">
+          <!-- Clean Diagram -->
+          <div class="diagram-container">
+            <svg id="sandboxSvg" class="number-line-svg" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+
+          <!-- Sandbox Revealed Answer Box -->
+          <div id="sbAnswerBox" class="hint-box hidden" style="margin-top:0;">
+            <div class="hint-title">
+              <span>📊</span> <span id="sbUiVerdictTitle">左、中、右三區判定：</span>
+              <span id="sbRuleVerdict" style="color:var(--primary); font-weight:900;"></span>
+            </div>
+            <div class="zones-3-grid" id="sbZonesGrid"></div>
+            <div class="hint-summary-box" id="sbConclusionText" style="font-size:0.95rem; font-weight:800;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <span id="uiFooterText">複合不等式 看圖練習 由陳恩鴻老師製作</span>
+    </footer>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. I18N BILINGUAL DICTIONARY
+       ========================================================================== */
+    const I18N = {
+      zh: {
+        mainTitle: "📐 複合不等式「睇箭咀」",
+        tabRandom: "🎲 隨機出題",
+        tabPractice: "🎯 練習模式 (選題型)",
+        tabSandbox: "🔬 教學工作台",
+        statQuestion: "題數",
+        statCorrect: "得分",
+        statStreak: "目標(答對20題)",
+        statAccuracy: "正確率",
+        qPrefix: "第",
+        qSuffix: "題",
+        topicFilterLbl: "題型：",
+        optTypeAll: "🎲 全部題型隨機",
+        optType1: "1. 同向向左 / 同向向右",
+        optType2: "2. 相向而行 (中間交疊)",
+        optType3: "3. 背向而行 (中間無交疊)",
+        optType4: "4. 同點背向 (雙空/雙實/一空一實)",
+        observeTip: "觀察數線箭咀覆蓋，選出最終結論：",
+        and: "及",
+        or: "或",
+        hintBtnShow: "顯示「睇箭咀」三區分析 (按 H)",
+        hintBtnHide: "收起三區分析 (按 H)",
+        hintPenaltyNote: "⚠️ 開啟提示本題不計分",
+        hintPenaltyFeedback: "💡 本題因開啟過提示，故不計入達標題數。",
+        teacherRuleHead: "老師口訣：",
+        ruleAnd: "【及】必須 2 條箭咀雙重覆蓋 (✓)，少於 2 條即 (✗)！",
+        ruleOr: "【或】只要有 至少 1 條箭咀 (1/2條) 覆蓋即打剔 (✓)，0 條才是 (✗)！",
+        conclusionLead: "💡 結論推導：只有打【✓】的區域才納入解：",
+        correctFeedbackTitle: "🎉 答得完全正確！",
+        firstTryFeedback: (c) => `🎯 已答對 ${c} / 20 題！繼續加油！`,
+        practiceFeedback: (c) => `🎯 得分 +1！目前累計：${c} 分`,
+        retryPromptTitle: "❌ 答案未啱，請再試一次！",
+        retryPromptDesc: "💡 仔細觀察數線箭咀，重新選一個答案！（未答對前不能進入下一題）",
+        finallyCorrectDesc: "⚠️ 終於答對了！但因之前曾答錯，本題不獲計分。",
+        nextBtnText: "下一題 ➔",
+        soundOn: "音效",
+        soundOff: "靜音",
+        langToggle: "English",
+        entryTitle: "歡迎進入複合不等式學習工具",
+        entrySubTitle: "請選擇語言並輸入學生資訊（用於合共答對 20 題頒發榮譽證書）：",
+        entryLblLang: "語言 / Language：",
+        entryLblClass: "班別 (Class)：",
+        entryLblNo: "學號 (Class No.)：",
+        entryLblName: "姓名 (Name)：",
+        entryBtnText: "開始練習 ➔",
+        certMainTitle: "複合不等式達人證書",
+        certSubTitle: "Certificate of Mastery in Compound Inequalities",
+        certCertifyText: "茲證明",
+        certDesc: "於複合不等式「睇箭咀」挑戰中，以卓越的數線分區分析能力，合共無提示正確完成 <strong>20 題</strong>，特頒此狀，以資嘉許！",
+        certBtnPrint: "列印 / 存為PDF",
+        certBtnContinue: "繼續挑戰",
+        sbTitle: "🔬 教學工作台 (課堂示範)",
+        sbDesc: "自由切換不等式與連詞。預設不顯示答案，方便課堂向學生發問，點擊下方按鈕才揭曉答案與三區分析。",
+        sbIneq1: "不等式 1 (上層)：",
+        sbIneq2: "不等式 2 (下層)：",
+        sbConn: "連詞 (Connector)：",
+        sbOptAnd: "及 (AND) • 需 2 條 (✓)",
+        sbOptOr: "或 (OR) • 需 1/2 條 (✓)",
+        sbPresetsLbl: "經典範例（筆記 1–7 涵蓋全部類型）：",
+        sbShowAnsBtn: "顯示答案與三區分析 (Show Answer)",
+        sbHideAnsBtn: "隱藏答案與分析 (Hide Answer)",
+        sbVerdictTitle: "左、中、右三區判定：",
+        sbRuleVerdictAnd: "連詞【及】➔ 必須 2 條箭咀雙重覆蓋 (✓)",
+        sbRuleVerdictOr: "連詞【或】➔ 只要有 1 或 2 條箭咀 (✓)",
+        sbConclusionLabel: "📢 課堂綜合結論：",
+        zoneLeft: "左區",
+        zoneMid: "中區",
+        zonePoint: "中(界點)",
+        zoneRight: "右區",
+        arrowSuffix: "條",
+        passTag: "✓ 納入",
+        failTag: "✗ 排除",
+        allReal: "所有實數",
+        noReal: "沒有實數",
+        allRealExcept: (k) => `所有實數除了 ${k} (x ≠ ${k})`,
+        footer: "複合不等式 看圖練習 由陳恩鴻老師製作"
+      },
+      en: {
+        mainTitle: "📐 Compound Inequalities",
+        tabRandom: "🎲 Random Quiz",
+        tabPractice: "🎯 Practice Mode",
+        tabSandbox: "🔬 Teaching Workbench",
+        statQuestion: "Q #",
+        statCorrect: "Score",
+        statStreak: "Target(20 Correct)",
+        statAccuracy: "Accuracy",
+        qPrefix: "Q ",
+        qSuffix: "",
+        topicFilterLbl: "Type:",
+        optTypeAll: "🎲 All Types (Random)",
+        optType1: "1. Same Direction (Left / Right)",
+        optType2: "2. Inward Facing (Overlap)",
+        optType3: "3. Outward Facing (No Overlap)",
+        optType4: "4. Same Point (Hollow/Solid/Mixed)",
+        observeTip: "Observe arrow coverage and select the conclusion:",
+        and: "AND",
+        or: "OR",
+        hintBtnShow: "Show 3-Zone Analysis (Press H)",
+        hintBtnHide: "Hide Analysis (Press H)",
+        hintPenaltyNote: "⚠️ Hint forfeits score",
+        hintPenaltyFeedback: "💡 Hint was used, so this question is not counted toward the 20-question goal.",
+        teacherRuleHead: "Rule: ",
+        ruleAnd: "[AND] Requires 2 overlapping arrows (✓); < 2 is (✗)!",
+        ruleOr: "[OR] Requires at least 1 arrow (1 or 2) (✓); 0 is (✗)!",
+        conclusionLead: "💡 Conclusion: Combine zones with [✓]:",
+        correctFeedbackTitle: "🎉 Correct! Well done!",
+        firstTryFeedback: (c) => `🎯 Total ${c} / 20 Solved! Keep it up!`,
+        practiceFeedback: (c) => `🎯 +1 Point! Current Score: ${c}`,
+        retryPromptTitle: "❌ Incorrect, try again!",
+        retryPromptDesc: "💡 Check the arrows and try another option! (Must solve correctly to proceed)",
+        finallyCorrectDesc: "⚠️ Correct! However, no points awarded due to previous incorrect attempt.",
+        nextBtnText: "Next Question ➔",
+        soundOn: "Sound",
+        soundOff: "Mute",
+        langToggle: "繁體中文",
+        entryTitle: "Compound Inequalities Learning Tool",
+        entrySubTitle: "Select language and enter student details (used for 20-correct Certificate):",
+        entryLblLang: "Language / 語言：",
+        entryLblClass: "Class (班別)：",
+        entryLblNo: "Class No. (學號)：",
+        entryLblName: "Name (姓名)：",
+        entryBtnText: "Start Practice ➔",
+        certMainTitle: "Certificate of Mastery",
+        certSubTitle: "Compound Inequalities Master Award",
+        certCertifyText: "This is to certify that",
+        certDesc: "Demonstrated exceptional mastery by achieving <strong>20 correct answers without hints</strong> in the Compound Inequalities Challenge!",
+        certBtnPrint: "Print / Save PDF",
+        certBtnContinue: "Continue Practice",
+        sbTitle: "🔬 Teaching Sandbox (Classroom Demo)",
+        sbDesc: "Customize inequalities and connector. Answer is hidden by default for class questioning; click below to reveal.",
+        sbIneq1: "Inequality 1 (Upper):",
+        sbIneq2: "Inequality 2 (Lower):",
+        sbConn: "Connector:",
+        sbOptAnd: "AND • 2 arrows required (✓)",
+        sbOptOr: "OR • 1 or 2 arrows required (✓)",
+        sbPresetsLbl: "Examples (Notes 1–7 Covering All Types):",
+        sbShowAnsBtn: "Show Answer & Analysis",
+        sbHideAnsBtn: "Hide Answer & Analysis",
+        sbVerdictTitle: "3-Zone Breakdown:",
+        sbRuleVerdictAnd: "Connector [AND] ➔ Requires 2 overlapping arrows (✓)",
+        sbRuleVerdictOr: "Connector [OR] ➔ Requires at least 1 arrow (✓)",
+        sbConclusionLabel: "📢 Final Conclusion:",
+        zoneLeft: "Left",
+        zoneMid: "Middle",
+        zonePoint: "Point",
+        zoneRight: "Right",
+        arrowSuffix: "arr",
+        passTag: "✓ Inc",
+        failTag: "✗ Exc",
+        allReal: "All real numbers",
+        noReal: "No real solutions",
+        allRealExcept: (k) => `All real numbers except ${k} (x ≠ ${k})`,
+        footer: "Compound Inequalities Diagram Practice • Created by Teacher Chan Yan Hung"
+      }
+    };
+
+    /* ==========================================================================
+       2. APPLICATION STATE
+       ========================================================================== */
+    const state = {
+      lang: 'zh',
+      mode: 'random',
+      selectedTypeFilter: 'ALL',
+      certificateAwarded: false,
+      soundEnabled: true,
+      hintVisible: false,
+      hintUsedForCurrentQuestion: false,
+      firstAttemptSuccess: true, // Becomes false if student gets it wrong on first try!
+      questionSolved: false,     // Becomes true only when correct answer is found!
+      sandboxRevealed: false,
+      student: {
+        className: '3A',
+        classNo: '1',
+        name: '學生'
+      },
+      scores: {
+        random: {
+          questionCounter: 1,
+          correct: 0,
+          total: 0,
+          streak: 0,
+          bestStreak: 0
+        },
+        practice: {
+          questionCounter: 1,
+          correct: 0,
+          total: 0,
+          streak: 0,
+          bestStreak: 0
+        }
+      },
+      get score() {
+        return (this.scores && this.scores[this.mode]) ? this.scores[this.mode] : (this.scores ? this.scores.random : { questionCounter: 1, correct: 0, total: 0, streak: 0, bestStreak: 0 });
+      },
+      get questionCounter() {
+        return this.score.questionCounter;
+      },
+      set questionCounter(val) {
+        this.score.questionCounter = val;
+      },
+      currentQuestion: null
+    };
+
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      playSuccess() {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587.33, now);
+        osc.frequency.setValueAtTime(880.00, now + 0.08);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      },
+      playWrong() {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(190, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.22);
+        gain.gain.setValueAtTime(0.16, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      },
+      playCertificate() {
+        if (!state.soundEnabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+          gain.gain.setValueAtTime(0.25, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.4);
+        });
+      }
+    };
+
+    /* ==========================================================================
+       3. MATHEMATICAL SOLVER & 3-ZONE ANALYZER
+       ========================================================================== */
+    function formatIneq(ineq) {
+      const opMap = { ">=": "≥", ">": ">", "<=": "≤", "<": "<" };
+      const valStr = ineq.val < 0 ? `−${Math.abs(ineq.val)}` : `${ineq.val}`;
+      return `x ${opMap[ineq.op]} ${valStr}`;
+    }
+
+    function formatMathHtml(str) {
+      if (typeof str !== 'string') return str;
+      // Standardize negative numbers to standard mathematical minus sign \u2212
+      let res = str.replace(/(^|[^\w\-])-(\d+)/g, '$1−$2');
+      // Format variable x with standard math italic
+      res = res.replace(/\bx\b/g, '<span class="math-var">x</span>');
+      return `<span class="math-formula">${res}</span>`;
+    }
+
+    function checkSatisfies(val, ineq) {
+      if (ineq.op === ">=") return val >= ineq.val;
+      if (ineq.op === ">") return val > ineq.val;
+      if (ineq.op === "<=") return val <= ineq.val;
+      if (ineq.op === "<") return val < ineq.val;
+      return false;
+    }
+
+    function analyzeRegions(ineq1, ineq2, connector) {
+      const v1 = ineq1.val;
+      const v2 = ineq2.val;
+      const qualifies = (cnt) => (connector === 'AND' ? cnt === 2 : cnt >= 1);
+      const t = I18N[state.lang];
+
+      if (v1 === v2) {
+        const k = v1;
+        const leftCount = (checkSatisfies(k - 1, ineq1) ? 1 : 0) + (checkSatisfies(k - 1, ineq2) ? 1 : 0);
+        const midCount = (checkSatisfies(k, ineq1) ? 1 : 0) + (checkSatisfies(k, ineq2) ? 1 : 0);
+        const rightCount = (checkSatisfies(k + 1, ineq1) ? 1 : 0) + (checkSatisfies(k + 1, ineq2) ? 1 : 0);
+
+        return [
+          { name: t.zoneLeft, range: `x < ${k}`, count: leftCount, pass: qualifies(leftCount) },
+          { name: t.zonePoint, range: `x = ${k}`, count: midCount, pass: qualifies(midCount) },
+          { name: t.zoneRight, range: `x > ${k}`, count: rightCount, pass: qualifies(rightCount) }
+        ];
+      } else {
+        const a = Math.min(v1, v2);
+        const b = Math.max(v1, v2);
+
+        const leftCount = (checkSatisfies(a - 1, ineq1) ? 1 : 0) + (checkSatisfies(a - 1, ineq2) ? 1 : 0);
+        const midCount = (checkSatisfies((a + b) / 2, ineq1) ? 1 : 0) + (checkSatisfies((a + b) / 2, ineq2) ? 1 : 0);
+        const rightCount = (checkSatisfies(b + 1, ineq1) ? 1 : 0) + (checkSatisfies(b + 1, ineq2) ? 1 : 0);
+
+        return [
+          { name: t.zoneLeft, range: `x < ${a}`, count: leftCount, pass: qualifies(leftCount) },
+          { name: t.zoneMid, range: `${a} < x < ${b}`, count: midCount, pass: qualifies(midCount) },
+          { name: t.zoneRight, range: `x > ${b}`, count: rightCount, pass: qualifies(rightCount) }
+        ];
+      }
+    }
+
+    function solveCompound(ineq1, ineq2, connector, lang = state.lang) {
+      const v1 = ineq1.val;
+      const v2 = ineq2.val;
+      const op1 = ineq1.op;
+      const op2 = ineq2.op;
+      const t = I18N[lang];
+      const orWord = lang === 'zh' ? '或' : 'or';
+
+      if (v1 === v2) {
+        const k = v1;
+        const p1_isRight = (op1 === ">=" || op1 === ">");
+        const p2_isRight = (op2 === ">=" || op2 === ">");
+
+        if (p1_isRight && p2_isRight) {
+          const strictlyHollow = (op1 === ">" || op2 === ">");
+          return connector === 'AND'
+            ? (strictlyHollow ? `x > ${k}` : `x ≥ ${k}`)
+            : (op1.includes("=") || op2.includes("=") ? `x ≥ ${k}` : `x > ${k}`);
+        }
+        if (!p1_isRight && !p2_isRight) {
+          const strictlyHollow = (op1 === "<" || op2 === "<");
+          return connector === 'AND'
+            ? (strictlyHollow ? `x < ${k}` : `x ≤ ${k}`)
+            : (op1.includes("=") || op2.includes("=") ? `x ≤ ${k}` : `x < ${k}`);
+        }
+
+        const solidCount = (op1.includes("=") ? 1 : 0) + (op2.includes("=") ? 1 : 0);
+        if (connector === 'AND') {
+          return solidCount === 2 ? `x = ${k}` : t.noReal;
+        } else {
+          return solidCount >= 1 ? t.allReal : t.allRealExcept(k);
+        }
+      }
+
+      const a = Math.min(v1, v2);
+      const b = Math.max(v1, v2);
+      const ineqAtA = (v1 === a) ? ineq1 : ineq2;
+      const ineqAtB = (v1 === b) ? ineq1 : ineq2;
+
+      const aPointsRight = (ineqAtA.op === ">=" || ineqAtA.op === ">");
+      const bPointsRight = (ineqAtB.op === ">=" || ineqAtB.op === ">");
+
+      if (aPointsRight && bPointsRight) {
+        return connector === 'AND' ? formatIneq(ineqAtB) : formatIneq(ineqAtA);
+      }
+      if (!aPointsRight && !bPointsRight) {
+        return connector === 'AND' ? formatIneq(ineqAtA) : formatIneq(ineqAtB);
+      }
+      if (aPointsRight && !bPointsRight) {
+        if (connector === 'AND') {
+          const leftSym = ineqAtA.op.includes("=") ? "≤" : "<";
+          const rightSym = ineqAtB.op.includes("=") ? "≤" : "<";
+          return `${a} ${leftSym} x ${rightSym} ${b}`;
+        } else {
+          return t.allReal;
+        }
+      }
+      if (!aPointsRight && bPointsRight) {
+        return connector === 'AND' ? t.noReal : `${formatIneq(ineqAtA)} ${orWord} ${formatIneq(ineqAtB)}`;
+      }
+
+      return t.noReal;
+    }
+
+    /* ==========================================================================
+       4. DISTRACTOR GENERATOR
+       ========================================================================== */
+    function generateDistractorOptions(ineq1, ineq2, connector, correctAnswer) {
+      const options = new Set();
+      options.add(correctAnswer);
+      const t = I18N[state.lang];
+      const orWord = state.lang === 'zh' ? '或' : 'or';
+
+      const oppositeConn = (connector === 'AND' ? 'OR' : 'AND');
+      const oppositeAns = solveCompound(ineq1, ineq2, oppositeConn);
+      if (oppositeAns && oppositeAns !== correctAnswer) options.add(oppositeAns);
+
+      if (!options.has(t.allReal) && correctAnswer !== t.allReal) options.add(t.allReal);
+      if (!options.has(t.noReal) && correctAnswer !== t.noReal) options.add(t.noReal);
+
+      const v1 = ineq1.val;
+      const v2 = ineq2.val;
+      const a = Math.min(v1, v2);
+      const b = Math.max(v1, v2);
+
+      const candidates = [
+        formatIneq(ineq1),
+        formatIneq(ineq2),
+        `x ≥ ${b}`,
+        `x > ${b}`,
+        `x ≤ ${a}`,
+        `x < ${a}`,
+        `${a} < x < ${b}`,
+        `${a} ≤ x ≤ ${b}`,
+        `${a} < x ≤ ${b}`,
+        `${a} ≤ x < ${b}`,
+        `x ≤ ${a} ${orWord} x ≥ ${b}`,
+        `x < ${a} ${orWord} x > ${b}`,
+        t.allRealExcept(a),
+        `x = ${a}`
+      ];
+
+      for (const cand of candidates) {
+        if (options.size >= 4) break;
+        if (!options.has(cand)) options.add(cand);
+      }
+
+      const arr = Array.from(options).slice(0, 4);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    /* ==========================================================================
+       5. INFINITE QUESTION GENERATOR
+       ========================================================================== */
+    function onPracticeTypeChange(val) {
+      state.selectedTypeFilter = val;
+      loadNextQuestion();
+    }
+
+    function generateInfiniteQuestion() {
+      const filter = (state.mode === 'practice' && state.selectedTypeFilter) ? state.selectedTypeFilter : 'ALL';
+      let type;
+      if (filter === 'TYPE1') {
+        const pool = ['SAME_RIGHT', 'SAME_LEFT'];
+        type = pool[Math.floor(Math.random() * pool.length)];
+      } else if (filter === 'TYPE2') {
+        type = 'INWARD_OVERLAP';
+      } else if (filter === 'TYPE3') {
+        type = 'OUTWARD_GAP';
+      } else if (filter === 'TYPE4') {
+        const pool = ['SINGLE_HOLLOW', 'SINGLE_ONE_SOLID', 'SINGLE_BOTH_SOLID'];
+        type = pool[Math.floor(Math.random() * pool.length)];
+      } else {
+        // filter === 'ALL' (隨機出題 或 練習模式全部隨機)
+        // 降低同點 (TYPE4) 機率至約 10%，三大常規考核題型佔 90%
+        const r = Math.random();
+        if (r < 0.35) {
+          // 35% 同向向左 / 向右
+          type = Math.random() > 0.5 ? 'SAME_RIGHT' : 'SAME_LEFT';
+        } else if (r < 0.65) {
+          // 30% 相向而行 (中間交疊)
+          type = 'INWARD_OVERLAP';
+        } else if (r < 0.90) {
+          // 25% 背向而行 (中間無交疊)
+          type = 'OUTWARD_GAP';
+        } else {
+          // 10% 同點背向 (雙空心 / 一實一空 / 雙實心) - 特殊題型低頻出現
+          const singlePool = ['SINGLE_HOLLOW', 'SINGLE_ONE_SOLID', 'SINGLE_BOTH_SOLID'];
+          type = singlePool[Math.floor(Math.random() * singlePool.length)];
+        }
+      }
+      const connector = Math.random() > 0.5 ? 'AND' : 'OR';
+
+      let ineq1, ineq2;
+      let titleZh = "", titleEn = "";
+
+      if (type.startsWith('SINGLE_')) {
+        const k = Math.floor(Math.random() * 11) - 5;
+        if (type === 'SINGLE_HOLLOW') {
+          titleZh = "同點背向 (雙空心)";
+          titleEn = "Same Point Outward (Both Hollow)";
+          ineq1 = { op: ">", val: k };
+          ineq2 = { op: "<", val: k };
+        } else if (type === 'SINGLE_ONE_SOLID') {
+          titleZh = "同點背向 (一實一空)";
+          titleEn = "Same Point Outward (One Solid, One Hollow)";
+          const swap = Math.random() > 0.5;
+          ineq1 = { op: swap ? ">=" : "<=", val: k };
+          ineq2 = { op: swap ? "<" : ">", val: k };
+        } else {
+          titleZh = "同點重疊 (雙實心)";
+          titleEn = "Same Point Overlap (Both Solid)";
+          ineq1 = { op: ">=", val: k };
+          ineq2 = { op: "<=", val: k };
+        }
+      } else {
+        const a = Math.floor(Math.random() * 10) - 6;
+        const gap = Math.floor(Math.random() * 4) + 2;
+        const b = a + gap;
+
+        const opRight1 = Math.random() > 0.5 ? ">=" : ">";
+        const opRight2 = Math.random() > 0.5 ? ">=" : ">";
+        const opLeft1 = Math.random() > 0.5 ? "<=" : "<";
+        const opLeft2 = Math.random() > 0.5 ? "<=" : "<";
+
+        if (type === 'SAME_RIGHT') {
+          titleZh = "同向向右";
+          titleEn = "Same Direction Right";
+          ineq1 = { op: opRight1, val: a };
+          ineq2 = { op: opRight2, val: b };
+        } else if (type === 'SAME_LEFT') {
+          titleZh = "同向向左";
+          titleEn = "Same Direction Left";
+          ineq1 = { op: opLeft1, val: a };
+          ineq2 = { op: opLeft2, val: b };
+        } else if (type === 'INWARD_OVERLAP') {
+          titleZh = "相向而行 (中間交疊)";
+          titleEn = "Facing Inward (Middle Overlap)";
+          ineq1 = { op: opRight1, val: a };
+          ineq2 = { op: opLeft2, val: b };
+        } else {
+          titleZh = "背向而行 (中間無交疊)";
+          titleEn = "Facing Outward (Middle Gap)";
+          ineq1 = { op: opLeft1, val: a };
+          ineq2 = { op: opRight2, val: b };
+        }
+
+        if (Math.random() > 0.5) {
+          const temp = ineq1;
+          ineq1 = ineq2;
+          ineq2 = temp;
+        }
+      }
+
+      const correctAns = solveCompound(ineq1, ineq2, connector);
+
+      return {
+        id: 'dyn_' + Date.now(),
+        ineq1,
+        ineq2,
+        connector,
+        correctAnswer: correctAns,
+        explanation: state.lang === 'zh'
+          ? `依據左、中、右三區的箭咀分析，在當前【${connector === 'AND' ? '及 (需2條)' : '或 (需1/2條)'}】條件下得出正解。`
+          : `Based on the 3-zone arrow count, the condition [${connector === 'AND' ? 'AND (2 arrows)' : 'OR (1/2 arrows)'}] yields the correct conclusion.`,
+        caseTitle: state.lang === 'zh'
+          ? `無限挑戰：${titleZh} (${connector === 'AND' ? '及' : '或'})`
+          : `Endless: ${titleEn} (${connector})`
+      };
+    }
+
+    /* ==========================================================================
+       6. SVG NUMBER LINE RENDERER
+       - ONLY displays boundary numbers belonging to the question!
+       - Clean number line axis without arrowheads!
+       - No floating text labels on the arrows!
+       - Compact height (145px) for one-page mobile fit!
+       ========================================================================== */
+    function renderSvgNumberLine(svgElement, ineq1, ineq2, connector, showHints) {
+      const svg = svgElement;
+      svg.innerHTML = '';
+
+      const width = 800;
+      const height = 150;
+      const axisY = 110; // Axis placed cleanly near bottom with plenty of room for enlarged numbers
+      const isDark = document.body.classList.contains('dark');
+
+      const v1 = ineq1.val;
+      const v2 = ineq2.val;
+      const isSingle = (v1 === v2);
+
+      const minVal = Math.min(v1, v2);
+      const maxVal = Math.max(v1, v2);
+
+      let rangeMin, rangeMax;
+      if (isSingle) {
+        rangeMin = minVal - 3.5;
+        rangeMax = maxVal + 3.5;
+      } else {
+        const span = maxVal - minVal;
+        rangeMin = minVal - Math.max(1.8, span * 0.6);
+        rangeMax = maxVal + Math.max(1.8, span * 0.6);
+      }
+
+      const paddingX = 85;
+      const scaleX = (val) => paddingX + ((val - rangeMin) / (rangeMax - rangeMin)) * (width - 2 * paddingX);
+
+      // SVG Defs: refined smaller arrowheads for inequality rays (userSpaceOnUse ensures compact size on both PC & mobile)
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      defs.innerHTML = `
+        <marker id="arrowHead1" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M 1.5 2 L 7.5 5 L 1.5 8 z" fill="#2563eb" />
+        </marker>
+        <marker id="arrowHead2" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M 1.5 2 L 7.5 5 L 1.5 8 z" fill="#0284c7" />
+        </marker>
+      `;
+      svg.appendChild(defs);
+
+      const analysis = analyzeRegions(ineq1, ineq2, connector);
+
+      // 3 Zones Shading & Dividers
+      if (showHints) {
+        if (isSingle) {
+          const ptX = scaleX(v1);
+
+          const rectL = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectL.setAttribute('x', paddingX - 25);
+          rectL.setAttribute('y', 10);
+          rectL.setAttribute('width', ptX - (paddingX - 25));
+          rectL.setAttribute('height', axisY - 10);
+          rectL.setAttribute('fill', analysis[0].pass ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.05)');
+          svg.appendChild(rectL);
+
+          const rectR = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectR.setAttribute('x', ptX);
+          rectR.setAttribute('y', 10);
+          rectR.setAttribute('width', (width - paddingX + 25) - ptX);
+          rectR.setAttribute('height', axisY - 10);
+          rectR.setAttribute('fill', analysis[2].pass ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.05)');
+          svg.appendChild(rectR);
+
+          const lineK = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          lineK.setAttribute('x1', ptX);
+          lineK.setAttribute('y1', 10);
+          lineK.setAttribute('x2', ptX);
+          lineK.setAttribute('y2', axisY);
+          lineK.setAttribute('stroke', '#f59e0b');
+          lineK.setAttribute('stroke-width', '2.5');
+          lineK.setAttribute('stroke-dasharray', '4 4');
+          svg.appendChild(lineK);
+
+          drawZoneTag(svg, (paddingX - 25 + ptX) / 2, 24, analysis[0]);
+          drawZoneTag(svg, ptX, 24, analysis[1]);
+          drawZoneTag(svg, (ptX + width - paddingX + 25) / 2, 24, analysis[2]);
+        } else {
+          const ptA = scaleX(minVal);
+          const ptB = scaleX(maxVal);
+
+          const rectL = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectL.setAttribute('x', paddingX - 25);
+          rectL.setAttribute('y', 10);
+          rectL.setAttribute('width', ptA - (paddingX - 25));
+          rectL.setAttribute('height', axisY - 10);
+          rectL.setAttribute('fill', analysis[0].pass ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.05)');
+          svg.appendChild(rectL);
+
+          const rectM = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectM.setAttribute('x', ptA);
+          rectM.setAttribute('y', 10);
+          rectM.setAttribute('width', ptB - ptA);
+          rectM.setAttribute('height', axisY - 10);
+          rectM.setAttribute('fill', analysis[1].pass ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.05)');
+          svg.appendChild(rectM);
+
+          const rectR = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          rectR.setAttribute('x', ptB);
+          rectR.setAttribute('y', 10);
+          rectR.setAttribute('width', (width - paddingX + 25) - ptB);
+          rectR.setAttribute('height', axisY - 10);
+          rectR.setAttribute('fill', analysis[2].pass ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.05)');
+          svg.appendChild(rectR);
+
+          [ptA, ptB].forEach(px => {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', px);
+            line.setAttribute('y1', 10);
+            line.setAttribute('x2', px);
+            line.setAttribute('y2', axisY);
+            line.setAttribute('stroke', '#f59e0b');
+            line.setAttribute('stroke-width', '2.5');
+            line.setAttribute('stroke-dasharray', '4 4');
+            svg.appendChild(line);
+          });
+
+          drawZoneTag(svg, (paddingX - 25 + ptA) / 2, 24, analysis[0]);
+          drawZoneTag(svg, (ptA + ptB) / 2, 24, analysis[1]);
+          drawZoneTag(svg, (ptB + width - paddingX + 25) / 2, 24, analysis[2]);
+        }
+      }
+
+      // Draw Main Number Line Axis (Thickened 4px clean line without arrowheads)
+      const mainAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      mainAxis.setAttribute('x1', paddingX - 45);
+      mainAxis.setAttribute('y1', axisY);
+      mainAxis.setAttribute('x2', width - paddingX + 45);
+      mainAxis.setAttribute('y2', axisY);
+      mainAxis.setAttribute('stroke', isDark ? '#94a3b8' : '#475569');
+      mainAxis.setAttribute('stroke-width', '4');
+      svg.appendChild(mainAxis);
+
+      // ONLY DRAW TICKS AND NUMBERS FOR THE QUESTION'S BOUNDARY VALUES! (Enlarged 28px font)
+      const keyPoints = isSingle ? [v1] : [minVal, maxVal];
+      keyPoints.forEach(v => {
+        const tx = scaleX(v);
+
+        // Tick line (thickened 3.5px, longer 20px span)
+        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tick.setAttribute('x1', tx);
+        tick.setAttribute('y1', axisY - 10);
+        tick.setAttribute('x2', tx);
+        tick.setAttribute('y2', axisY + 10);
+        tick.setAttribute('stroke', isDark ? '#f8fafc' : '#0f172a');
+        tick.setAttribute('stroke-width', '3.5');
+        svg.appendChild(tick);
+
+        // Number text (DSE Exam Paper Style: Times New Roman 30px + Standard \u2212)
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', tx);
+        text.setAttribute('y', axisY + 30);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-family', '"Times New Roman", Times, "Cambria Math", "Nimbus Roman No9 L", serif');
+        text.setAttribute('font-size', '30');
+        text.setAttribute('font-weight', '700');
+        text.setAttribute('fill', isDark ? '#f8fafc' : '#0f172a');
+        text.setAttribute('style', 'font-feature-settings: "tnum" 1;');
+        const formattedVal = (v < 0) ? `−${Math.abs(v)}` : `${v}`;
+        text.textContent = formattedVal;
+        svg.appendChild(text);
+      });
+
+      // Draw Inequality Arrow Rays (Thickened 5px rays with 8.5px endpoints)
+      function drawArrow(ineq, levelY, color, markerId) {
+        const ptX = scaleX(ineq.val);
+        const isRight = (ineq.op === ">=" || ineq.op === ">");
+        const isSolid = ineq.op.includes("=");
+        const endX = isRight ? (width - paddingX + 30) : (paddingX - 30);
+
+        // Leader Stem (2.5px dashed guide)
+        const stem = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        stem.setAttribute('x1', ptX);
+        stem.setAttribute('y1', axisY);
+        stem.setAttribute('x2', ptX);
+        stem.setAttribute('y2', levelY);
+        stem.setAttribute('stroke', color);
+        stem.setAttribute('stroke-width', '2.5');
+        stem.setAttribute('stroke-dasharray', '3 3');
+        svg.appendChild(stem);
+
+        // Horizontal Ray (4px refined clean bar with compact arrowhead)
+        const ray = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        ray.setAttribute('x1', ptX);
+        ray.setAttribute('y1', levelY);
+        ray.setAttribute('x2', endX);
+        ray.setAttribute('y2', levelY);
+        ray.setAttribute('stroke', color);
+        ray.setAttribute('stroke-width', '4');
+        ray.setAttribute('marker-end', `url(#${markerId})`);
+        svg.appendChild(ray);
+
+        // Endpoint Circle (Radius 7.5px, 3px stroke: clear distinction, neat proportion)
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', ptX);
+        circle.setAttribute('cy', levelY);
+        circle.setAttribute('r', '7.5');
+        circle.setAttribute('stroke', color);
+        circle.setAttribute('stroke-width', '3');
+        circle.setAttribute('fill', isSolid ? color : (isDark ? '#131d31' : '#ffffff'));
+        svg.appendChild(circle);
+      }
+
+      // Upper arrow levelY = 44, Lower arrow levelY = 76
+      drawArrow(ineq1, 44, '#2563eb', 'arrowHead1');
+      drawArrow(ineq2, 76, '#0284c7', 'arrowHead2');
+    }
+
+    function drawZoneTag(svg, cx, cy, zone) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', cx - 44);
+      rect.setAttribute('y', cy - 16);
+      rect.setAttribute('width', 88);
+      rect.setAttribute('height', 26);
+      rect.setAttribute('rx', 6);
+      rect.setAttribute('fill', zone.pass ? '#10b981' : '#ef4444');
+      g.appendChild(rect);
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', cx);
+      text.setAttribute('y', cy + 2);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('font-size', '15');
+      text.setAttribute('font-weight', '900');
+      text.setAttribute('fill', '#ffffff');
+      const arrowUnit = state.lang === 'zh' ? '條' : (zone.count === 1 ? 'arr' : 'arrs');
+      text.textContent = `${zone.count}${arrowUnit} ${zone.pass ? '✓' : '✗'}`;
+      g.appendChild(text);
+
+      svg.appendChild(g);
+    }
+
+    /* ==========================================================================
+       7. UI INTERACTION & STRICT MASTERY LOGIC
+       - Cannot advance to next question if wrong! Must retry until correct!
+       ========================================================================== */
+    function switchMode(mode) {
+      state.mode = mode;
+
+      const tabRandom = document.getElementById('tabRandom');
+      const tabPractice = document.getElementById('tabPractice');
+      const tabSandbox = document.getElementById('tabSandbox');
+
+      if (tabRandom) tabRandom.classList.toggle('active', mode === 'random');
+      if (tabPractice) tabPractice.classList.toggle('active', mode === 'practice');
+      if (tabSandbox) tabSandbox.classList.toggle('active', mode === 'sandbox');
+
+      const isSandbox = (mode === 'sandbox');
+      document.getElementById('quizCard').classList.toggle('hidden', isSandbox);
+      document.getElementById('scoreboard').classList.toggle('hidden', isSandbox);
+      document.getElementById('sandboxCard').classList.toggle('hidden', !isSandbox);
+
+      const filterBox = document.getElementById('practiceTypeFilterContainer');
+      if (filterBox) {
+        filterBox.style.display = (mode === 'practice' ? 'flex' : 'none');
+      }
+
+      if (mode === 'random') {
+        state.selectedTypeFilter = 'ALL';
+        updateScoreboardUI();
+        loadNextQuestion();
+      } else if (mode === 'practice') {
+        const selectEl = document.getElementById('practiceTypeFilter');
+        state.selectedTypeFilter = selectEl ? selectEl.value : 'ALL';
+        updateScoreboardUI();
+        loadNextQuestion();
+      } else {
+        state.sandboxRevealed = false;
+        updateSandboxUI();
+      }
+    }
+
+    function loadNextQuestion() {
+      state.answered = false;
+      state.questionSolved = false;
+      state.firstAttemptSuccess = true;
+      state.hintVisible = false;
+      state.hintUsedForCurrentQuestion = false;
+      updateHintUI();
+
+      state.currentQuestion = generateInfiniteQuestion();
+
+      const t = I18N[state.lang];
+      document.getElementById('questionBadge').textContent = `${t.qPrefix}${state.questionCounter}${t.qSuffix}`;
+      document.getElementById('statQuestionNum').textContent = `${t.qPrefix}${state.questionCounter}${t.qSuffix}`;
+
+      renderQuestion(state.currentQuestion);
+    }
+    const loadNextEndlessQuestion = loadNextQuestion;
+
+    function renderQuestion(q) {
+      const t = I18N[state.lang];
+      const exprEl = document.getElementById('inequalityExprDisplay');
+      const connClass = q.connector === 'AND' ? 'connector-and' : 'connector-or';
+      const connText = q.connector === 'AND' ? t.and : t.or;
+
+      exprEl.innerHTML = `
+        <span>${formatMathHtml(formatIneq(q.ineq1))}</span>
+        <span class="connector-badge ${connClass}">${connText}</span>
+        <span>${formatMathHtml(formatIneq(q.ineq2))}</span>
+      `;
+
+      const svg = document.getElementById('numberLineSvg');
+      renderSvgNumberLine(svg, q.ineq1, q.ineq2, q.connector, state.hintVisible);
+
+      populateHintBox(q.ineq1, q.ineq2, q.connector, q.correctAnswer);
+
+      const options = generateDistractorOptions(q.ineq1, q.ineq2, q.connector, q.correctAnswer);
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      const letters = ['A', 'B', 'C', 'D'];
+      options.forEach((optText, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.id = `optBtn_${i}`;
+        btn.innerHTML = `
+          <div class="opt-letter">${letters[i]}</div>
+          <div class="opt-content">${formatMathHtml(optText)}</div>
+        `;
+        btn.onclick = () => selectOption(optText, btn);
+        grid.appendChild(btn);
+      });
+
+      document.getElementById('feedbackCard').classList.add('hidden');
+      document.getElementById('btnNext').classList.add('hidden');
+    }
+
+    function populateHintBox(ineq1, ineq2, connector, correctAns) {
+      const t = I18N[state.lang];
+      const ruleText = document.getElementById('hintConnectorRuleText');
+      ruleText.innerHTML = connector === 'AND' ? t.ruleAnd : t.ruleOr;
+
+      const grid = document.getElementById('hintZonesGrid');
+      grid.innerHTML = '';
+
+      const zones = analyzeRegions(ineq1, ineq2, connector);
+      zones.forEach(z => {
+        const card = document.createElement('div');
+        card.className = `zone-card ${z.pass ? 'zone-pass' : 'zone-fail'}`;
+        card.innerHTML = `
+          <div class="zone-name">${z.name}</div>
+          <div class="zone-range">${formatMathHtml(z.range)}</div>
+          <div><span class="arrow-badge badge-${z.count}">${z.count} ${t.arrowSuffix}</span></div>
+          <div class="verdict-tag ${z.pass ? 'pass' : 'fail'}">${z.pass ? t.passTag : t.failTag}</div>
+        `;
+        grid.appendChild(card);
+      });
+
+      document.getElementById('hintSummaryConclusion').innerHTML = `
+        ${t.conclusionLead} <strong style="color:var(--primary); font-size:0.95rem;">${formatMathHtml(correctAns)}</strong>
+      `;
+    }
+
+    function toggleHint() {
+      state.hintVisible = !state.hintVisible;
+      if (state.hintVisible) {
+        state.hintUsedForCurrentQuestion = true;
+      }
+      updateHintUI();
+      if (state.currentQuestion) {
+        renderSvgNumberLine(
+          document.getElementById('numberLineSvg'),
+          state.currentQuestion.ineq1,
+          state.currentQuestion.ineq2,
+          state.currentQuestion.connector,
+          state.hintVisible
+        );
+      }
+    }
+
+    function updateHintUI() {
+      const t = I18N[state.lang];
+      const hintBox = document.getElementById('hintBox');
+      const btnText = document.getElementById('hintBtnText');
+      if (state.hintVisible) {
+        hintBox.classList.remove('hidden');
+        btnText.textContent = t.hintBtnHide;
+      } else {
+        hintBox.classList.add('hidden');
+        btnText.textContent = t.hintBtnShow;
+      }
+    }
+
+    /* Option selection with Retry & Next Question Blocking */
+    function selectOption(selectedText, selectedBtn) {
+      if (state.questionSolved) return; // already solved, wait for Next button
+
+      state.score.total++;
+      const isCorrect = (selectedText === state.currentQuestion.correctAnswer);
+
+      if (isCorrect) {
+        AudioEngine.playSuccess();
+        selectedBtn.classList.remove('selected-wrong');
+        selectedBtn.classList.add('selected-correct');
+
+        // Disable all buttons now that it is successfully solved
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => btn.disabled = true);
+
+        state.answered = true;
+        state.questionSolved = true;
+
+        if (state.firstAttemptSuccess && !state.hintUsedForCurrentQuestion) {
+          // Pure success on first try with zero hints!
+          state.score.correct++;
+          state.score.streak++;
+          if (state.score.streak > state.score.bestStreak) {
+            state.score.bestStreak = state.score.streak;
+          }
+          showFeedback(true, 'first_try');
+
+          // Certificate triggered ONLY in 'random' mode when TOTAL CORRECT reaches 20!
+          if (state.mode === 'random' && state.score.correct >= 20 && !state.certificateAwarded) {
+            state.certificateAwarded = true;
+            setTimeout(showCertificateModal, 350);
+          }
+        } else {
+          // Solved after retry or with hint -> no points toward the 20-correct goal
+          if (state.hintUsedForCurrentQuestion) {
+            showFeedback(true, 'with_hint');
+          } else {
+            showFeedback(true, 'after_retry');
+          }
+        }
+
+        // REVEAL NEXT QUESTION BUTTON ONLY WHEN CORRECT!
+        document.getElementById('btnNext').classList.remove('hidden');
+      } else {
+        // WRONG: CANNOT PROCEED TO NEXT QUESTION! MUST RETRY!
+        AudioEngine.playWrong();
+        selectedBtn.classList.add('selected-wrong');
+        selectedBtn.disabled = true; // disable this wrong option so student can't re-pick it
+
+        state.firstAttemptSuccess = false; // forfeited score for this round
+        state.score.streak = 0;
+
+        // HIDE NEXT BUTTON: Student cannot advance!
+        document.getElementById('btnNext').classList.add('hidden');
+
+        showFeedback(false, 'wrong_retry');
+      }
+
+      updateScoreboardUI();
+    }
+
+    function showFeedback(isCorrect, reason) {
+      const t = I18N[state.lang];
+      const card = document.getElementById('feedbackCard');
+      const title = document.getElementById('feedbackTitle');
+      const desc = document.getElementById('feedbackDesc');
+
+      card.classList.remove('hidden');
+
+      if (isCorrect) {
+        card.className = "feedback-card correct";
+        if (reason === 'first_try') {
+          if (state.mode === 'random') {
+            title.innerHTML = `${t.correctFeedbackTitle} (${t.firstTryFeedback(state.score.correct)})`;
+          } else {
+            title.innerHTML = `${t.correctFeedbackTitle} (${t.practiceFeedback ? t.practiceFeedback(state.score.correct) : `得分：${state.score.correct}`})`;
+          }
+          desc.textContent = state.currentQuestion.explanation;
+        } else if (reason === 'with_hint') {
+          title.innerHTML = `⚠️ 答案正確（但有提示不計分）`;
+          desc.innerHTML = `<strong>${t.hintPenaltyFeedback}</strong><br>${state.currentQuestion.explanation}`;
+        } else {
+          title.innerHTML = `🎉 終於答對了！`;
+          desc.innerHTML = `<strong>${t.finallyCorrectDesc}</strong><br>${state.currentQuestion.explanation}`;
+        }
+      } else {
+        // Wrong attempt: Encourage retry, block next question!
+        card.className = "feedback-card wrong";
+        title.innerHTML = t.retryPromptTitle;
+        desc.innerHTML = t.retryPromptDesc;
+      }
+    }
+
+    function nextQuestion() {
+      if (!state.questionSolved) return; // double check: cannot skip!
+      state.questionCounter++;
+      loadNextQuestion();
+    }
+
+    function updateScoreboardUI() {
+      const isPractice = (state.mode === 'practice');
+      const board = document.getElementById('scoreboard');
+      const streakCard = document.getElementById('cardStatStreak');
+
+      if (board) board.classList.toggle('cols-3', isPractice);
+      if (streakCard) streakCard.style.display = isPractice ? 'none' : '';
+
+      const t = I18N[state.lang];
+      document.getElementById('questionBadge').textContent = `${t.qPrefix}${state.questionCounter}${t.qSuffix}`;
+      document.getElementById('statQuestionNum').textContent = `${t.qPrefix}${state.questionCounter}${t.qSuffix}`;
+      document.getElementById('statCorrect').textContent = state.score.correct;
+
+      if (!isPractice) {
+        document.getElementById('statStreak').textContent = `${state.score.correct} / 20 🏆`;
+      }
+
+      const acc = state.score.total > 0 ? Math.round((state.score.correct / state.score.total) * 100) : 100;
+      document.getElementById('statAccuracy').textContent = `${acc}%`;
+    }
+
+    /* ==========================================================================
+       8. 20-STREAK CERTIFICATE MODAL
+       ========================================================================== */
+    function showCertificateModal() {
+      AudioEngine.playCertificate();
+      const modal = document.getElementById('certificateModal');
+      const t = I18N[state.lang];
+
+      const today = new Date();
+      const dateStr = state.lang === 'zh'
+        ? `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`
+        : today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      document.getElementById('certMainTitle').textContent = t.certMainTitle;
+      document.getElementById('certSubTitle').textContent = t.certSubTitle;
+      document.getElementById('certCertifyText').textContent = t.certCertifyText;
+      document.getElementById('certDescriptionText').innerHTML = t.certDesc;
+      document.getElementById('certDateDisplay').textContent = `${state.lang === 'zh' ? '頒發日期：' : 'Date: '}${dateStr}`;
+      document.getElementById('certBtnPrint').textContent = t.certBtnPrint;
+      document.getElementById('certBtnContinue').textContent = t.certBtnContinue;
+
+      const infoStr = state.lang === 'zh'
+        ? `${state.student.className}班 ${state.student.classNo}號 ${state.student.name}`
+        : `Class ${state.student.className} (${state.student.classNo}) ${state.student.name}`;
+      document.getElementById('certStudentNameDisplay').textContent = infoStr;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeCertificate() {
+      document.getElementById('certificateModal').classList.add('hidden');
+    }
+
+    /* ==========================================================================
+       9. STUDENT ONBOARDING & EDIT MODAL
+       ========================================================================== */
+    function chooseEntryLang(lang) {
+      state.lang = lang;
+      document.getElementById('btnChooseZh').style.borderColor = (lang === 'zh' ? 'var(--primary)' : 'var(--border)');
+      document.getElementById('btnChooseZh').style.background = (lang === 'zh' ? 'var(--primary-light)' : 'var(--card-bg)');
+      document.getElementById('btnChooseEn').style.borderColor = (lang === 'en' ? 'var(--primary)' : 'var(--border)');
+      document.getElementById('btnChooseEn').style.background = (lang === 'en' ? 'var(--primary-light)' : 'var(--card-bg)');
+      applyLanguageModal();
+    }
+
+    function applyLanguageModal() {
+      const t = I18N[state.lang];
+      document.getElementById('entryTitle').textContent = t.entryTitle;
+      document.getElementById('entrySubTitle').textContent = t.entrySubTitle;
+      document.getElementById('entryLblLang').textContent = t.entryLblLang;
+      document.getElementById('entryLblClass').textContent = t.entryLblClass;
+      document.getElementById('entryLblNo').textContent = t.entryLblNo;
+      document.getElementById('entryLblName').textContent = t.entryLblName;
+      document.getElementById('entryBtnText').textContent = t.entryBtnText;
+    }
+
+    function confirmStudentEntry() {
+      const cls = document.getElementById('inputClass').value.trim();
+      const no = document.getElementById('inputNo').value.trim();
+      const name = document.getElementById('inputName').value.trim();
+
+      if (!cls || !no || !name) {
+        alert(state.lang === 'zh' ? "請完整填寫班別、學號與姓名！" : "Please complete Class, Class No., and Name!");
+        return;
+      }
+
+      state.student.className = cls;
+      state.student.classNo = no;
+      state.student.name = name;
+
+      try {
+        localStorage.setItem('compound_tutor_student', JSON.stringify({
+          className: cls,
+          classNo: no,
+          name: name,
+          lang: state.lang
+        }));
+      } catch (e) {}
+
+      updateStudentBadge();
+      document.getElementById('entryModal').classList.add('hidden');
+
+      applyLanguage();
+      loadNextQuestion();
+    }
+
+    function openStudentEditModal() {
+      document.getElementById('inputClass').value = state.student.className;
+      document.getElementById('inputNo').value = state.student.classNo;
+      document.getElementById('inputName').value = state.student.name;
+      chooseEntryLang(state.lang);
+      document.getElementById('entryModal').classList.remove('hidden');
+    }
+
+    function updateStudentBadge() {
+      const text = `${state.student.className} (${state.student.classNo}) ${state.student.name}`;
+      document.getElementById('studentBadgeText').textContent = text;
+    }
+
+    /* ==========================================================================
+       10. TEACHING SANDBOX (Classroom Demo with Hidden Answer)
+       ========================================================================== */
+    function onSandboxInputChange() {
+      state.sandboxRevealed = false;
+      updateSandboxUI();
+    }
+
+    function toggleSandboxAnswer() {
+      state.sandboxRevealed = !state.sandboxRevealed;
+      updateSandboxUI();
+    }
+
+    function updateSandboxUI() {
+      const t = I18N[state.lang];
+      const op1 = document.getElementById('sbOp1').value;
+      const val1 = parseFloat(document.getElementById('sbVal1').value) || 0;
+      const op2 = document.getElementById('sbOp2').value;
+      const val2 = parseFloat(document.getElementById('sbVal2').value) || 0;
+      const connector = document.getElementById('sbConnector').value;
+
+      const ineq1 = { op: op1, val: val1 };
+      const ineq2 = { op: op2, val: val2 };
+
+      const svg = document.getElementById('sandboxSvg');
+      renderSvgNumberLine(svg, ineq1, ineq2, connector, state.sandboxRevealed);
+
+      const btnText = document.getElementById('sbToggleAnsText');
+      btnText.textContent = state.sandboxRevealed ? t.sbHideAnsBtn : t.sbShowAnsBtn;
+
+      const ansBox = document.getElementById('sbAnswerBox');
+      if (state.sandboxRevealed) {
+        ansBox.classList.remove('hidden');
+        const ans = solveCompound(ineq1, ineq2, connector);
+        const ruleText = document.getElementById('sbRuleVerdict');
+        ruleText.textContent = connector === 'AND' ? t.sbRuleVerdictAnd : t.sbRuleVerdictOr;
+
+        const grid = document.getElementById('sbZonesGrid');
+        grid.innerHTML = '';
+        const zones = analyzeRegions(ineq1, ineq2, connector);
+
+        zones.forEach(z => {
+          const card = document.createElement('div');
+          card.className = `zone-card ${z.pass ? 'zone-pass' : 'zone-fail'}`;
+          card.innerHTML = `
+            <div class="zone-name">${z.name}</div>
+            <div class="zone-range">${formatMathHtml(z.range)}</div>
+            <div><span class="arrow-badge badge-${z.count}">${z.count} ${t.arrowSuffix}</span></div>
+            <div class="verdict-tag ${z.pass ? 'pass' : 'fail'}">${z.pass ? t.passTag : t.failTag}</div>
+          `;
+          grid.appendChild(card);
+        });
+
+        document.getElementById('sbConclusionText').innerHTML = `
+          ${t.sbConclusionLabel} <span style="color:#2563eb;">${formatMathHtml(ans)}</span>
+        `;
+      } else {
+        ansBox.classList.add('hidden');
+      }
+    }
+
+    function loadSandboxPreset(rowNumber, conn) {
+      if (rowNumber === 1) {
+        // 筆記 1: 同向向右 (x >= -5 與 x > -2)
+        document.getElementById('sbOp1').value = '>=';
+        document.getElementById('sbVal1').value = -5;
+        document.getElementById('sbOp2').value = '>';
+        document.getElementById('sbVal2').value = -2;
+      } else if (rowNumber === 2) {
+        // 筆記 2: 同向向左 (x <= 3 與 x < 7)
+        document.getElementById('sbOp1').value = '<=';
+        document.getElementById('sbVal1').value = 3;
+        document.getElementById('sbOp2').value = '<';
+        document.getElementById('sbVal2').value = 7;
+      } else if (rowNumber === 3) {
+        // 筆記 3: 相向而行 (中間交疊，x > -1 與 x <= 4)
+        document.getElementById('sbOp1').value = '>';
+        document.getElementById('sbVal1').value = -1;
+        document.getElementById('sbOp2').value = '<=';
+        document.getElementById('sbVal2').value = 4;
+      } else if (rowNumber === 4) {
+        // 筆記 4: 背向而行 (中間無交疊，x < -3 與 x >= 2)
+        document.getElementById('sbOp1').value = '<';
+        document.getElementById('sbVal1').value = -3;
+        document.getElementById('sbOp2').value = '>=';
+        document.getElementById('sbVal2').value = 2;
+      } else if (rowNumber === 5) {
+        // 筆記 5: 同點背向 (雙空心，x > 3 與 x < 3)
+        document.getElementById('sbOp1').value = '>';
+        document.getElementById('sbVal1').value = 3;
+        document.getElementById('sbOp2').value = '<';
+        document.getElementById('sbVal2').value = 3;
+      } else if (rowNumber === 6) {
+        // 筆記 6: 同點背向 (一實一空，x >= 3 與 x < 3)
+        document.getElementById('sbOp1').value = '>=';
+        document.getElementById('sbVal1').value = 3;
+        document.getElementById('sbOp2').value = '<';
+        document.getElementById('sbVal2').value = 3;
+      } else if (rowNumber === 7) {
+        // 筆記 7: 同點背向 (雙實心，x >= 3 與 x <= 3)
+        document.getElementById('sbOp1').value = '>=';
+        document.getElementById('sbVal1').value = 3;
+        document.getElementById('sbOp2').value = '<=';
+        document.getElementById('sbVal2').value = 3;
+      }
+      if (conn) {
+        document.getElementById('sbConnector').value = conn;
+      }
+      onSandboxInputChange();
+    }
+
+    /* ==========================================================================
+       11. LANGUAGE SWITCH CONTROLLER
+       ========================================================================== */
+    function toggleLanguage() {
+      state.lang = (state.lang === 'zh') ? 'en' : 'zh';
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      const t = I18N[state.lang];
+
+      document.getElementById('uiMainTitle').textContent = t.mainTitle;
+      const tabRandom = document.getElementById('tabRandom');
+      if (tabRandom) tabRandom.textContent = t.tabRandom;
+      const tabPractice = document.getElementById('tabPractice');
+      if (tabPractice) tabPractice.textContent = t.tabPractice;
+      const tabSandbox = document.getElementById('tabSandbox');
+      if (tabSandbox) tabSandbox.textContent = t.tabSandbox;
+
+      document.getElementById('lblStatQuestion').textContent = t.statQuestion;
+      document.getElementById('lblStatCorrect').textContent = t.statCorrect;
+      document.getElementById('lblStatStreak').textContent = t.statStreak;
+      document.getElementById('lblStatAccuracy').textContent = t.statAccuracy;
+
+      const topicLbl = document.getElementById('uiTopicFilterLbl');
+      if (topicLbl) topicLbl.textContent = t.topicFilterLbl;
+      const optAll = document.getElementById('optTypeAll');
+      if (optAll) optAll.textContent = t.optTypeAll;
+      const opt1 = document.getElementById('optType1');
+      if (opt1) opt1.textContent = t.optType1;
+      const opt2 = document.getElementById('optType2');
+      if (opt2) opt2.textContent = t.optType2;
+      const opt3 = document.getElementById('optType3');
+      if (opt3) opt3.textContent = t.optType3;
+      const opt4 = document.getElementById('optType4');
+      if (opt4) opt4.textContent = t.optType4;
+
+      document.getElementById('langStatusText').textContent = t.langToggle;
+      document.getElementById('soundStatusText').textContent = state.soundEnabled ? t.soundOn : t.soundOff;
+
+      document.getElementById('uiObserveTip').textContent = t.observeTip;
+      document.getElementById('uiHintPenaltyNote').textContent = t.hintPenaltyNote;
+      document.getElementById('uiTeacherRuleHead').textContent = t.teacherRuleHead;
+      document.getElementById('uiNextBtnText').textContent = t.nextBtnText;
+
+      document.getElementById('sbUiTitle').textContent = t.sbTitle;
+      document.getElementById('sbUiDesc').textContent = t.sbDesc;
+      document.getElementById('sbLblIneq1').textContent = t.sbIneq1;
+      document.getElementById('sbLblIneq2').textContent = t.sbIneq2;
+      document.getElementById('sbLblConn').textContent = t.sbConn;
+      document.getElementById('sbOptAnd').textContent = t.sbOptAnd;
+      document.getElementById('sbOptOr').textContent = t.sbOptOr;
+      document.getElementById('sbUiPresetsLbl').textContent = t.sbPresetsLbl;
+      document.getElementById('sbUiVerdictTitle').textContent = t.sbVerdictTitle;
+
+      const footerEl = document.getElementById('uiFooterText');
+      if (footerEl && t.footer) footerEl.textContent = t.footer;
+
+      updateStudentBadge();
+
+      if ((state.mode === 'random' || state.mode === 'practice' || state.mode === 'endless') && state.currentQuestion && !state.answered) {
+        state.currentQuestion.correctAnswer = solveCompound(state.currentQuestion.ineq1, state.currentQuestion.ineq2, state.currentQuestion.connector);
+        renderQuestion(state.currentQuestion);
+        updateHintUI();
+      } else if (state.mode === 'sandbox') {
+        updateSandboxUI();
+      }
+    }
+
+    /* ==========================================================================
+       12. EVENT LISTENERS & INITIALIZATION
+       ========================================================================== */
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+      const key = e.key.toUpperCase();
+      if (key === 'A' || key === '1') {
+        const btn = document.getElementById('optBtn_0');
+        if (btn && !btn.disabled) btn.click();
+      } else if (key === 'B' || key === '2') {
+        const btn = document.getElementById('optBtn_1');
+        if (btn && !btn.disabled) btn.click();
+      } else if (key === 'C' || key === '3') {
+        const btn = document.getElementById('optBtn_2');
+        if (btn && !btn.disabled) btn.click();
+      } else if (key === 'D' || key === '4') {
+        const btn = document.getElementById('optBtn_3');
+        if (btn && !btn.disabled) btn.click();
+      } else if (key === 'H') {
+        toggleHint();
+      } else if (key === 'ENTER') {
+        const nextBtn = document.getElementById('btnNext');
+        if (nextBtn && !nextBtn.classList.contains('hidden')) {
+          nextBtn.click();
+        }
+      }
+    });
+
+    document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
+
+    document.getElementById('soundToggleBtn').addEventListener('click', () => {
+      state.soundEnabled = !state.soundEnabled;
+      const t = I18N[state.lang];
+      document.getElementById('soundStatusText').textContent = state.soundEnabled ? t.soundOn : t.soundOff;
+    });
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      if (state.mode === 'sandbox') {
+        updateSandboxUI();
+      } else if (state.currentQuestion) {
+        renderSvgNumberLine(
+          document.getElementById('numberLineSvg'),
+          state.currentQuestion.ineq1,
+          state.currentQuestion.ineq2,
+          state.currentQuestion.connector,
+          state.hintVisible
+        );
+      }
+    });
+
+    // Check localStorage
+    try {
+      const saved = localStorage.getItem('compound_tutor_student');
+      if (saved) {
+        const obj = JSON.parse(saved);
+        if (obj.className) document.getElementById('inputClass').value = obj.className;
+        if (obj.classNo) document.getElementById('inputNo').value = obj.classNo;
+        if (obj.name) document.getElementById('inputName').value = obj.name;
+        if (obj.lang) chooseEntryLang(obj.lang);
+      } else {
+        chooseEntryLang('zh');
+      }
+    } catch (e) {
+      chooseEntryLang('zh');
+    }
+  </script>
+</body>
+</html>
