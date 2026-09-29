@@ -2492,14 +2492,18 @@
       const paddingX = 85;
       const scaleX = (val) => paddingX + ((val - rangeMin) / (rangeMax - rangeMin)) * (width - 2 * paddingX);
 
-      // SVG Defs: refined smaller arrowheads for inequality rays (userSpaceOnUse ensures compact size on both PC & mobile)
+      // SVG Defs: razor sharp, compact arrowheads for inequality rays (base refX prevents line poke-through)
+      const prefix = svg.id || 'nl';
+      const mId1 = `${prefix}_arr1`;
+      const mId2 = `${prefix}_arr2`;
+
       const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
       defs.innerHTML = `
-        <marker id="arrowHead1" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
-          <path d="M 1.5 2 L 7.5 5 L 1.5 8 z" fill="#2563eb" />
+        <marker id="${mId1}" viewBox="0 0 16 12" refX="2" refY="6" markerWidth="14" markerHeight="10.5" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M 2 1.5 L 14 6 L 2 10.5 z" fill="#2563eb" />
         </marker>
-        <marker id="arrowHead2" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
-          <path d="M 1.5 2 L 7.5 5 L 1.5 8 z" fill="#0284c7" />
+        <marker id="${mId2}" viewBox="0 0 16 12" refX="2" refY="6" markerWidth="14" markerHeight="10.5" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M 2 1.5 L 14 6 L 2 10.5 z" fill="#0284c7" />
         </marker>
       `;
       svg.appendChild(defs);
@@ -2644,14 +2648,14 @@
         stem.setAttribute('stroke-dasharray', '3 3');
         svg.appendChild(stem);
 
-        // Horizontal Ray (4px refined clean bar with compact arrowhead)
+        // Horizontal Ray (3.5px clean bar with compact arrowhead)
         const ray = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         ray.setAttribute('x1', ptX);
         ray.setAttribute('y1', levelY);
         ray.setAttribute('x2', endX);
         ray.setAttribute('y2', levelY);
         ray.setAttribute('stroke', color);
-        ray.setAttribute('stroke-width', '4');
+        ray.setAttribute('stroke-width', '3.5');
         ray.setAttribute('marker-end', `url(#${markerId})`);
         svg.appendChild(ray);
 
@@ -2667,8 +2671,8 @@
       }
 
       // Upper arrow levelY = 44, Lower arrow levelY = 76
-      drawArrow(ineq1, 44, '#2563eb', 'arrowHead1');
-      drawArrow(ineq2, 76, '#0284c7', 'arrowHead2');
+      drawArrow(ineq1, 44, '#2563eb', mId1);
+      drawArrow(ineq2, 76, '#0284c7', mId2);
     }
 
     function drawZoneTag(svg, cx, cy, zone) {
